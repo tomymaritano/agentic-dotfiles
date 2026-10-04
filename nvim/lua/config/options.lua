@@ -10,3 +10,8 @@ opt.wrap = false -- no line wrap by default…
 opt.linebreak = true -- …but if wrap is toggled on, break at word boundaries
 opt.splitkeep = "screen" -- keep text on screen stable when opening splits
 opt.confirm = true -- ask to save instead of failing on :q with unsaved changes
+
+-- fish exports SHELL=fish. That would make :! and system() run through fish,
+-- which breaks POSIX snippets. Keep those on zsh. Interactive terminals use
+-- fish via Snacks (see lua/plugins/dashboard.lua).
+opt.shell = "/bin/zsh"

@@ -28,6 +28,8 @@ brew "sonar-scanner"                    # local analysis against SonarQube
 brew "gh"                               # GitHub CLI (gh-dash extension: `ghd`)
 brew "git"
 brew "mise"                             # runtime version manager (node/python/…)
+brew "k9s"                              # terminal UI for Kubernetes
+brew "stern"                            # tail logs from multiple pods
 brew "just"                             # command runner (see justfile)
 brew "shellcheck"                       # shell linter (CI + `just lint`)
 brew "stylua"                           # Lua formatter (nvim config)

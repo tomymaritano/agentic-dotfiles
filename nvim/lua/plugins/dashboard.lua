@@ -24,6 +24,10 @@ end
 return {
   "folke/snacks.nvim",
   opts = {
+    terminal = {
+      -- Ghostty's shell. vim.o.shell stays zsh so :! remains POSIX.
+      shell = "/opt/homebrew/bin/fish",
+    },
     dashboard = {
       preset = {
         header = [[

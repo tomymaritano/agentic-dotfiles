@@ -6,12 +6,22 @@ if test -x /opt/homebrew/bin/brew
 end
 
 # --- User binaries (CLIs: claude, coderabbit/cr, grok, etc.) ---
+# dotfiles/bin is prepended last so its `claude` wrapper wins over ~/.local/bin/claude.
 fish_add_path "$HOME/.local/bin"
 fish_add_path "$HOME/.grok/bin"
+fish_add_path "$HOME/dotfiles/bin"
 
 # --- Default editor ---
 set -gx EDITOR nvim
 set -gx VISUAL nvim
+
+# Programs that open a shell read $SHELL. Neovim keeps &shell on zsh for :!
+# and :terminal (fish is not POSIX); Snacks terminals use fish.
+set -gx SHELL /opt/homebrew/bin/fish
+
+# AWS CLI profile for this laptop (dev account). direnv can override it per repo.
+# starship reads this and prints it in the prompt.
+set -gx AWS_PROFILE psynth-dev
 
 # --- Java (openjdk@21, keg-only) for the SonarLint language server ---
 if test -d /opt/homebrew/opt/openjdk@21
@@ -97,8 +107,8 @@ if status is-interactive
 
     # tweets: `tweet "idea"` jots to ~/notes/tweets.md; `tweet` alone opens it.
     # Draft/post with Claude Code's /tweet command (see claude/commands/tweet.md).
-    # `claude` itself is wrapped (functions/claude.fish) to inject secrets from
-    # 1Password via `op run`, so X/SonarQube/xAI keys never live on disk.
+    # `claude` is ~/dotfiles/bin/claude (ahead of the real binary): it injects
+    # 1Password secrets via `op run` for both this shell and Neovim.
 
     # theme switcher (Ghostty + starship + nvim) — see functions/theme.fish
     complete -c theme -f -a "mocha tokyonight kanagawa rose-pine"

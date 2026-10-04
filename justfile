@@ -22,7 +22,7 @@ update:
 
 # lint shell scripts + Lua (same checks CI runs)
 lint:
-    shellcheck bootstrap.sh install.sh git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh
+    shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh
     stylua --check nvim/lua
 
 # install the community Claude Code agents/skills (aitmpl.com)

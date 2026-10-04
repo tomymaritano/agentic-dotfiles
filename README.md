@@ -44,7 +44,7 @@ Ghostty (terminal)  →  fish (shell)  →  Neovim / LazyVim (editor)
 |-------|------|----------|
 | Terminal | [Ghostty](https://ghostty.org) | fast GPU terminal, Nerd Font, blur + transparency |
 | Shell | [fish](https://fishshell.com) 4.x | interactive shell (default only in Ghostty; the system stays on zsh) |
-| Prompt | [starship](https://starship.rs) | prompt with git/language/duration; palette follows the active theme |
+| Prompt | [starship](https://starship.rs) | prompt with git, AWS profile, kube context, language, duration; palette follows the active theme |
 | Editor | [Neovim](https://neovim.io) + [LazyVim](https://lazyvim.org) | LSP, completion, fuzzy find — a VSCode replacement |
 | `cd` | [zoxide](https://github.com/ajeetdsouza/zoxide) | jump to frequent dirs (`z <name>`) |
 | `ls` | [eza](https://eza.rocks) | listing with icons + git |
@@ -53,6 +53,7 @@ Ghostty (terminal)  →  fish (shell)  →  Neovim / LazyVim (editor)
 | history | [atuin](https://atuin.sh) | fuzzy `Ctrl+R` shell history, per-dir + synced |
 | env | [direnv](https://direnv.net) | auto-load per-project env from `.envrc` |
 | runtimes | [mise](https://mise.jdx.dev) | node/python/go/… versions (replaces nvm); global set in `mise/config.toml` |
+| cluster | [k9s](https://k9scli.io) + [stern](https://github.com/stern/stern) | pod UI, and logs across pods. Need a kube context |
 | git | [lazygit](https://github.com/jesseduffield/lazygit) + [delta](https://github.com/dandavison/delta) | git TUI (`lg`) + pretty diffs |
 | tasks | [just](https://github.com/casey/just) | repo task runner (see [Tasks](#tasks)) |
 | quality | SonarLint (nvim) + SonarQube (Docker) | see [Code quality](#code-quality) |
@@ -242,7 +243,7 @@ see [lazyvim.org/keymaps](https://www.lazyvim.org/keymaps) for the full list.
 | `theme <name>` | [switch the whole-stack theme](#themes) |
 | `sq-up` / `sq-down` / `sq-logs` | [SonarQube](#code-quality) container control |
 | `grokcode` | Claude Code engine on Grok ([see below](#ai-assistants)) |
-| `claude` | wrapped to inject X/xAI/SonarQube secrets from 1Password (`op run`) |
+| `claude` | `~/dotfiles/bin/claude` — 1Password secrets via `op run`, for the shell and Neovim |
 | `ghd` / `ghpr` | gh-dash PR/issue dashboard / open a PR |
 | `mise use node@22` | set a runtime version (global or per project) |
 | `tweet "idea"` | jot a tweet idea to `~/notes/tweets.md` |
@@ -257,7 +258,8 @@ see [lazyvim.org/keymaps](https://www.lazyvim.org/keymaps) for the full list.
 - Reload config: `Cmd+Shift+,`.
 
 ### fish (`fish/config.fish`)
-- Loads Homebrew, sets `EDITOR=nvim`, adds Java (openjdk@21) to PATH for SonarLint.
+- Loads Homebrew, sets `EDITOR=nvim` and `SHELL` to fish, exports `AWS_PROFILE=psynth-dev` (direnv can override it), adds Java (openjdk@21) to PATH for SonarLint.
+- Puts `~/dotfiles/bin` first on `PATH` so `claude` is the 1Password wrapper, not the raw binary.
 - Initializes starship, zoxide, fzf, **atuin** and **direnv** in interactive sessions only.
 - **atuin** owns `Ctrl+R` (fuzzy history). Run `atuin import auto` once to seed it from your old history; `atuin login` is optional (only for cross-machine sync).
 - **direnv**: drop an `.envrc` in a project and run `direnv allow` once — vars load/unload as you `cd` in and out.
@@ -285,7 +287,7 @@ LazyVim base, personalized (not stock). The custom bits live in:
 - `lua/config/` → `options.lua`, `keymaps.lua`, `autocmds.lua` (see [Keybindings](#keybindings)).
 - `lua/plugins/`:
   - `colorscheme.lua` + `dashboard.lua` — themes & banner (see [Themes](#themes)).
-  - `lang.lua` — LazyVim extras for TS/JS, Python, Go, Rust, Docker, JSON, YAML + Prettier, ESLint and neotest (each: LSP + treesitter + formatter + test/debug adapter, via Mason).
+  - `lang.lua` — LazyVim extras for TS/JS, Python, Go, Rust, Docker, JSON, YAML, Helm, Markdown + Prettier, ESLint and neotest (each: LSP + treesitter + formatter + test/debug adapter, via Mason). Fish has no LazyVim extra; treesitter + `fish_lsp` are configured there.
   - `editor.lua` — nvim-dap (debug), harpoon2 (pin/jump files), octo (GitHub PRs), treesitter-context.
   - `claudecode.lua` — Claude Code inside nvim under `<leader>a`.
   - `sonarlint.lua` — live SonarLint ([Code quality](#code-quality)).
@@ -340,7 +342,7 @@ It runs `claude mcp add -s user sonarqube … sonarsource/sonarqube-mcp` under t
 hood. Notes:
 
 - `host.docker.internal:9000` is how the MCP container reaches SonarQube on the host.
-- Launch `claude` from **fish** so `${SONARQUBE_TOKEN}` is in its environment.
+- Launch `claude` from a shell that has `~/dotfiles/bin` on `PATH` (fish and the login zsh both do). The wrapper injects `${SONARQUBE_TOKEN}` from 1Password. Neovim's `<leader>ac` uses that same `claude`.
 - Issues only show up once a project has been analyzed with `sonar-scanner` (above).
 - Check status with `claude mcp list`; a `USER`-type token is required (the script uses it).
 
@@ -362,7 +364,7 @@ Tracked here and symlinked into `~/.claude`:
 
 Third-party components from [aitmpl.com](https://aitmpl.com) are **not** vendored — re-fetch them on a new machine with `./claude/install-templates.sh` (or `just claude-templates`): agents *ui-ux-designer, devops-engineer, test-engineer, deployment-engineer*; skills *senior-frontend, frontend-design, ui-ux-pro-max, senior-security, clean-code, react-best-practices*.
 
-Inside Neovim, `claudecode.nvim` bridges to the `claude` CLI under `<leader>a` (see [Keybindings](#keybindings)).
+Inside Neovim, `claudecode.nvim` bridges to the `claude` CLI under `<leader>a` (see [Keybindings](#keybindings)). Snacks terminals (`Ctrl-/`, `<leader>ft`) run fish. `:!` stays on zsh.
 
 ### Claude Code running on Grok (`ccr/config.json`)
 
@@ -437,7 +439,7 @@ fisher's own functions there are left untouched.)
 - macOS Apple Silicon (Homebrew under `/opt/homebrew`).
 - No secrets in the repo: `auth.json`, `.env`, `fish_variables` and `op/secrets.env` are in `.gitignore`.
 - **Secret scanning:** a global pre-commit hook (`git/hooks/pre-commit`, wired via `core.hooksPath`) runs **[gitleaks](https://github.com/gitleaks/gitleaks)** on staged changes and **blocks the commit** if it detects a key/token — a safety net so nothing sensitive ever reaches this public repo. Config + allowlists in `.gitleaks.toml`; bypass one commit with `git commit --no-verify`.
-- **Secrets via 1Password:** API keys (X, xAI, SonarQube) live in 1Password, not on disk. The `claude` fish function (`fish/functions/claude.fish`) wraps launches with `op run --env-file=op/secrets.env` so the MCP servers get their tokens at runtime (falls back to a plain launch if op is unavailable); `grokcode` does the same. Point `op/secrets.env` at your items via `op/secrets.env.example`.
+- **Secrets via 1Password:** API keys (X, xAI, SonarQube) live in 1Password, not on disk. `bin/claude` wraps the real binary with `op run --env-file=op/secrets.env` so the MCP servers get their tokens at runtime (plain launch if `op` or the env file is missing). `grokcode` does the same. Point `op/secrets.env` at your items via `op/secrets.env.example`.
 - **Keyboard:** my Corne (QMK) keymap — combos, macros and custom OLEDs — lives in its own repo, [corne-keymap](https://github.com/tomymaritano/corne-keymap) (QMK external userspace), not here. The QMK CLI is `pipx install qmk` (Brewfile installs `pipx`).
 - The active theme lives in tracked files (`ghostty/config`, `starship.toml`), so
   running `theme <x>` shows up as a diff on those two files — that's expected.

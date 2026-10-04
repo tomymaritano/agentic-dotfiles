@@ -30,6 +30,10 @@ link "$DOT/editorconfig"  "$HOME/.editorconfig"
 mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
 link "$DOT/ssh/config"    "$HOME/.ssh/config"
 
+# Login shell. Ghostty still launches fish; this file is what Terminal.app and
+# scripts get. Backs up a pre-existing ~/.zshrc on first link.
+link "$DOT/zsh/.zshrc"    "$HOME/.zshrc"
+
 # machine-local git overrides / secrets, pulled in by ~/.gitconfig's [include].
 # Never tracked. Seed an empty stub so git doesn't warn about a missing include.
 [ -f "$HOME/.gitconfig.local" ] || printf '# machine-local git overrides (not tracked)\n' > "$HOME/.gitconfig.local"

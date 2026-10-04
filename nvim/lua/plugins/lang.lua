@@ -15,6 +15,23 @@ return {
   { import = "lazyvim.plugins.extras.lang.docker" },
   { import = "lazyvim.plugins.extras.lang.json" },
   { import = "lazyvim.plugins.extras.lang.yaml" },
+  { import = "lazyvim.plugins.extras.lang.helm" },
+  { import = "lazyvim.plugins.extras.lang.markdown" },
+
+  -- LazyVim has no fish extra. Treesitter highlights config.fish; fish-lsp
+  -- attaches when Mason has the server (lspconfig name: fish_lsp).
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = { ensure_installed = { "fish" } },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        fish_lsp = {},
+      },
+    },
+  },
 
   -- formatting, linting + testing
   -- (JavaScript/JSX is already covered by the typescript extra above.)

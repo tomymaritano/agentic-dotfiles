@@ -15,6 +15,8 @@ $directory\
 $git_branch\
 $git_status\
 [](fg:surface2 bg:overlay0)\
+$aws\
+$kubernetes\
 $nodejs\
 $python\
 $rust\
@@ -53,6 +55,19 @@ format = "[ $symbol $branch ]($style)"
 [git_status]
 style = "fg:base bg:surface2"
 format = "[$all_status$ahead_behind ]($style)"
+
+# --- AWS / cluster ---
+# aws prints AWS_PROFILE (set in fish). kubernetes stays blank until a context exists.
+[aws]
+symbol = "aws "
+style = "fg:base bg:overlay0"
+format = "[ $symbol$profile( \\($region\\)) ]($style)"
+
+[kubernetes]
+disabled = false
+symbol = "k8s "
+style = "fg:base bg:overlay0"
+format = "[ $symbol$context( \\($namespace\\)) ]($style)"
 
 # --- Languages ---
 [nodejs]
