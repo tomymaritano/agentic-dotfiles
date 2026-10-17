@@ -1,6 +1,7 @@
-# Global preferences for Claude Code (Tomás)
+# Global preferences (Tomás)
 
-Applies across all projects. Project-level CLAUDE.md always overrides this.
+Applies across all projects, for any agent that reads this file (Claude Code,
+Codex, Grok Build). A project-level CLAUDE.md/AGENTS.md always overrides this.
 
 ## Environment
 - macOS (Apple Silicon), shell is **fish** inside Ghostty. Homebrew at `/opt/homebrew`.
