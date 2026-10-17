@@ -12,7 +12,7 @@
 ![editor](https://img.shields.io/badge/editor-Neovim%20·%20LazyVim-57A143?logo=neovim&logoColor=white)
 ![themes](https://img.shields.io/badge/themes-4%20·%20one--command%20switcher-e6c384)
 
-My macOS (Apple Silicon) terminal setup: **Ghostty + fish + Neovim (LazyVim)**, themed with a **one-command switcher** — `theme <name>` restyles the terminal, prompt and editor together (**Kanagawa Wave** by default; also Catppuccin Mocha, TokyoNight, Rose Pine). Plus modern CLI tools, code-quality tooling (SonarLint + SonarQube), and AI assistants (Claude Code, Grok, CodeRabbit).
+My macOS (Apple Silicon) terminal setup: **Ghostty + fish + Neovim (LazyVim)**, themed with a **one-command switcher** — `theme <name>` restyles the terminal, prompt and editor together (**Kanagawa Wave** by default; also Catppuccin Mocha, TokyoNight, Rose Pine). Plus modern CLI tools, code-quality tooling (SonarLint + SonarQube), and AI assistants (Claude Code, Codex, Grok, CodeRabbit) sharing one `AGENTS.md` and my own [Plumbline](https://github.com/tomymaritano/plumbline) design-review plugin.
 
 ## Contents
 
@@ -57,6 +57,8 @@ Ghostty (terminal)  →  fish (shell)  →  Neovim / LazyVim (editor)
 | git | [lazygit](https://github.com/jesseduffield/lazygit) + [delta](https://github.com/dandavison/delta) | git TUI (`lg`) + pretty diffs |
 | tasks | [just](https://github.com/casey/just) | repo task runner (see [Tasks](#tasks)) |
 | quality | SonarLint (nvim) + SonarQube (Docker) | see [Code quality](#code-quality) |
+| AI | Claude Code · Codex · Grok, one shared `AGENTS.md` | see [AI assistants](#ai-assistants) |
+| review | [Plumbline](https://github.com/tomymaritano/plumbline) | design-review skills, installed into Claude Code + Grok Build |
 
 ## Requirements
 
@@ -350,13 +352,21 @@ hood. Notes:
 
 Installed as global CLIs (their auth is local and **not** in this repo):
 - **Claude Code** — `claude`
+- **Codex** (OpenAI, native CLI) — `codex`
 - **Grok** (xAI, native CLI) — `grok`
 - **CodeRabbit** — `coderabbit` / `cr`
+
+### One shared `AGENTS.md`, every agent
+
+`agents/AGENTS.md` is the single source for global preferences (environment,
+conventions, stack) — install.sh symlinks that **one file** to both
+`~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. Edit it once, every agent sees
+the update. Grok Build needs nothing extra: it already reads
+`~/.claude/CLAUDE.md` natively, zero config.
 
 ### Claude Code config (`claude/`)
 
 Tracked here and symlinked into `~/.claude`:
-- **`CLAUDE.md`** — global preferences applied in every project (environment, conventions, stack).
 - **`commands/`** — slash commands *you* run: `/tweet`, `/commit`.
 - **`agents/`** — subagents Claude delegates to: `reviewer` (correctness/security/reuse review).
 - **`skills/`** — capabilities Claude auto-activates by description: `changelog` (release notes from git).
@@ -364,7 +374,11 @@ Tracked here and symlinked into `~/.claude`:
 
 Third-party components from [aitmpl.com](https://aitmpl.com) are **not** vendored — re-fetch them on a new machine with `./claude/install-templates.sh` (or `just claude-templates`): agents *ui-ux-designer, devops-engineer, test-engineer, deployment-engineer*; skills *senior-frontend, frontend-design, ui-ux-pro-max, senior-security, clean-code, react-best-practices*.
 
-My own **[Plumbline](https://github.com/tomymaritano/plumbline)** plugin (design-review skills based on *A Philosophy of Software Design*) is installed as a plugin from its own marketplace, not vendored: run `./claude/install-plumbline.sh` (or `just plumbline`). It installs into Claude Code and, if `grok` is on the PATH, Grok Build too. Re-running it updates. Then use `/plumbline:red-flags`, `/plumbline:design-review`, `/plumbline:design-it-twice`, etc.
+My own **[Plumbline](https://github.com/tomymaritano/plumbline)** plugin (design-review skills based on *A Philosophy of Software Design*, part of my day-to-day stack — see [Stack](#stack)) is installed from its own marketplace, not vendored: run `./claude/install-plumbline.sh` (or `just plumbline`). It installs into Claude Code and, if `grok` is on the PATH, Grok Build too. Re-running it updates. Then use `/plumbline:red-flags`, `/plumbline:design-review`, `/plumbline:design-it-twice`, etc.
+
+`claude/validate-frontmatter.sh` checks every command/agent/skill above has the
+frontmatter its type needs — it's part of `just lint` and runs in CI, so a
+malformed file fails before it reaches a real Claude Code session.
 
 Inside Neovim, `claudecode.nvim` bridges to the `claude` CLI under `<leader>a` (see [Keybindings](#keybindings)). Snacks terminals (`Ctrl-/`, `<leader>ft`) run fish. `:!` stays on zsh.
 
@@ -405,18 +419,26 @@ Common jobs are wrapped in a [`justfile`](https://github.com/casey/just) — run
 | `just install` | symlink configs (`./install.sh`) |
 | `just brew` | install/update from the `Brewfile` |
 | `just update` | pull + re-link + brew + fish plugins |
-| `just lint` | shellcheck + `stylua --check` (same as CI) |
+| `just lint` | shellcheck + `stylua --check` + `claude/` frontmatter check (same as CI) |
 | `just fmt` | auto-format the Lua config |
 | `just macos` | apply `macos/defaults.sh` |
 | `just sonar` | start SonarQube + wire the [MCP bridge](#let-the-ai-read-your-issues--sonarqube-mcp) |
+| `just x` | register X's official MCP servers with Claude Code |
+| `just claude-templates` | fetch the community Claude Code agents/skills ([aitmpl.com](https://aitmpl.com)) |
+| `just plumbline` | install/update my [Plumbline](https://github.com/tomymaritano/plumbline) plugin |
+| `just ai-sync` | all four of the above, one command — catch up the whole AI layer after `just update` |
 
 Shell scripts and Lua are linted on every push by `.github/workflows/lint.yml`.
 
 ## Updating
 
 ```bash
-just update    # git pull --rebase + ./install.sh + brew bundle + fisher update
+just update     # git pull --rebase + ./install.sh + brew bundle + fisher update
+just ai-sync    # separately: refresh community templates, Plumbline, and the SonarQube/X MCPs
 ```
+
+`ai-sync` is deliberately not folded into `update` — `sonar` starts Docker and
+`x` can need an API key, neither of which you want firing unattended.
 
 Inside nvim: `:Lazy sync` to update plugins (commit the changed `lazy-lock.json`),
 `:Mason` to manage language servers.

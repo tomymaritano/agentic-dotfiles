@@ -81,7 +81,15 @@ for skill in "$DOT"/claude/skills/*/; do
   [ -d "$skill" ] && link "${skill%/}" "$HOME/.claude/skills/$(basename "$skill")"
 done
 [ -f "$DOT/claude/voice.md" ]  && link "$DOT/claude/voice.md"  "$HOME/.claude/voice.md"
-[ -f "$DOT/claude/CLAUDE.md" ] && link "$DOT/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+
+# Shared global instructions: one file (agents/AGENTS.md), two symlinks.
+# Claude Code reads it as CLAUDE.md; Codex reads it natively as AGENTS.md.
+# Grok Build needs nothing extra — it already reads ~/.claude/CLAUDE.md.
+if [ -f "$DOT/agents/AGENTS.md" ]; then
+  link "$DOT/agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+  mkdir -p "$HOME/.codex"
+  link "$DOT/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
+fi
 
 echo
 echo "Done. Next:"
