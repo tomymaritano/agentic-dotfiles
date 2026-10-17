@@ -22,12 +22,16 @@ update:
 
 # lint shell scripts + Lua (same checks CI runs)
 lint:
-    shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh
+    shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh claude/install-plumbline.sh
     stylua --check nvim/lua
 
 # install the community Claude Code agents/skills (aitmpl.com)
 claude-templates:
     ./claude/install-templates.sh
+
+# install/update my Plumbline design-review plugin (Claude Code + Grok)
+plumbline:
+    ./claude/install-plumbline.sh
 
 # auto-format Lua
 fmt:

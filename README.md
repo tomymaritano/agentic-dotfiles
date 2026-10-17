@@ -364,6 +364,8 @@ Tracked here and symlinked into `~/.claude`:
 
 Third-party components from [aitmpl.com](https://aitmpl.com) are **not** vendored — re-fetch them on a new machine with `./claude/install-templates.sh` (or `just claude-templates`): agents *ui-ux-designer, devops-engineer, test-engineer, deployment-engineer*; skills *senior-frontend, frontend-design, ui-ux-pro-max, senior-security, clean-code, react-best-practices*.
 
+My own **[Plumbline](https://github.com/tomymaritano/plumbline)** plugin (design-review skills based on *A Philosophy of Software Design*) is installed as a plugin from its own marketplace, not vendored: run `./claude/install-plumbline.sh` (or `just plumbline`). It installs into Claude Code and, if `grok` is on the PATH, Grok Build too. Re-running it updates. Then use `/plumbline:red-flags`, `/plumbline:design-review`, `/plumbline:design-it-twice`, etc.
+
 Inside Neovim, `claudecode.nvim` bridges to the `claude` CLI under `<leader>a` (see [Keybindings](#keybindings)). Snacks terminals (`Ctrl-/`, `<leader>ft`) run fish. `:!` stays on zsh.
 
 ### Claude Code running on Grok (`ccr/config.json`)
