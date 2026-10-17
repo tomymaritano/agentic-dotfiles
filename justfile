@@ -20,10 +20,11 @@ update:
     brew bundle --file=Brewfile
     fish -c 'fisher update'
 
-# lint shell scripts + Lua (same checks CI runs)
+# lint shell scripts + Lua + claude/ frontmatter (same checks CI runs)
 lint:
-    shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh claude/install-plumbline.sh
+    shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh claude/install-plumbline.sh claude/validate-frontmatter.sh
     stylua --check nvim/lua
+    ./claude/validate-frontmatter.sh
 
 # install the community Claude Code agents/skills (aitmpl.com)
 claude-templates:
@@ -49,3 +50,9 @@ sonar:
 # register X's official MCP servers with Claude Code (docs + api)
 x:
     ./x/setup-mcp.sh
+
+# catch up the whole AI layer in one go: community templates, Plumbline, and
+# the SonarQube/X MCPs. Not folded into `update` — sonar starts Docker and x
+# can need an API key, neither of which should fire unattended.
+ai-sync: claude-templates plumbline sonar x
+    @echo "✓ AI layer synced"

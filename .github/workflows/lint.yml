@@ -13,7 +13,7 @@ jobs:
       - name: shellcheck
         run: |
           sudo apt-get update && sudo apt-get install -y shellcheck
-          shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh claude/install-plumbline.sh
+          shellcheck bootstrap.sh install.sh bin/claude git/hooks/pre-commit macos/defaults.sh sonarqube/setup-mcp.sh x/setup-mcp.sh claude/install-templates.sh claude/install-plumbline.sh claude/validate-frontmatter.sh
 
       - name: stylua
         uses: JohnnyMorganz/stylua-action@v4
@@ -21,6 +21,9 @@ jobs:
           token: ${{ github.token }}
           version: latest
           args: --check nvim/lua
+
+      - name: claude/ frontmatter
+        run: ./claude/validate-frontmatter.sh
 
   install:
     # Smoke-test that install.sh reproduces the symlinks in a throwaway HOME.
@@ -35,4 +38,8 @@ jobs:
           test -L "$HOME/.gitconfig" || { echo "missing ~/.gitconfig symlink"; exit 1; }
           test -L "$HOME/.config/starship.toml" || { echo "missing starship symlink"; exit 1; }
           test -L "$HOME/.config/fish/config.fish" || { echo "missing fish symlink"; exit 1; }
+          test -L "$HOME/.claude/CLAUDE.md" || { echo "missing ~/.claude/CLAUDE.md symlink"; exit 1; }
+          test -L "$HOME/.codex/AGENTS.md" || { echo "missing ~/.codex/AGENTS.md symlink"; exit 1; }
+          diff "$(readlink -f "$HOME/.claude/CLAUDE.md")" "$(readlink -f "$HOME/.codex/AGENTS.md")" \
+            || { echo "~/.claude/CLAUDE.md and ~/.codex/AGENTS.md point at different content"; exit 1; }
           echo "✓ install.sh reproduced the symlinks"
