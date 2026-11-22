@@ -1,11 +1,11 @@
-# dotfiles
+# agentic-dotfiles
 
 
 
 <img width="4688" height="2976" alt="image" src="https://github.com/user-attachments/assets/7dca5eed-33b1-455f-aff4-7452e725d813" />
 
 
-[![lint](https://github.com/tomymaritano/dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/tomymaritano/dotfiles/actions/workflows/lint.yml)
+[![lint](https://github.com/tomymaritano/agentic-dotfiles/actions/workflows/lint.yml/badge.svg)](https://github.com/tomymaritano/agentic-dotfiles/actions/workflows/lint.yml)
 ![platform](https://img.shields.io/badge/platform-macOS%20Apple%20Silicon-000000?logo=apple&logoColor=white)
 ![shell](https://img.shields.io/badge/shell-fish%204.x-4E9A06?logo=gnubash&logoColor=white)
 ![terminal](https://img.shields.io/badge/terminal-Ghostty-1E1E2E)
@@ -75,13 +75,13 @@ Fresh machine — one line does the base setup (Homebrew, clone, `brew bundle`,
 symlinks, fish plugins, runtimes):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tomymaritano/dotfiles/main/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/tomymaritano/agentic-dotfiles/main/bootstrap.sh | bash
 ```
 
 Or step by step:
 
 ```bash
-git clone git@github.com:tomymaritano/dotfiles.git ~/dotfiles
+git clone git@github.com:tomymaritano/agentic-dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # 1) Install everything from Homebrew

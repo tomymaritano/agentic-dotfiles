@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # bootstrap.sh — set up a fresh macOS machine from scratch. Safe to re-run.
 #
-#   curl -fsSL https://raw.githubusercontent.com/tomymaritano/dotfiles/main/bootstrap.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/tomymaritano/agentic-dotfiles/main/bootstrap.sh | bash
 #
 set -euo pipefail
 
@@ -17,7 +17,7 @@ DOT="$HOME/dotfiles"
 if [ -d "$DOT/.git" ]; then
   git -C "$DOT" pull --ff-only || true
 else
-  git clone https://github.com/tomymaritano/dotfiles.git "$DOT"
+  git clone https://github.com/tomymaritano/agentic-dotfiles.git "$DOT"
 fi
 cd "$DOT"
 
