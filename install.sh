@@ -91,6 +91,14 @@ if [ -f "$DOT/agents/AGENTS.md" ]; then
   link "$DOT/agents/AGENTS.md" "$HOME/.codex/AGENTS.md"
 fi
 
+# tmux config, plus the Claude Code hatch plugin (one popup session per directory).
+link "$DOT/tmux/tmux.conf" "$HOME/.tmux.conf"
+hatch="$HOME/.tmux/plugins/tmux-claude-hatch"
+if [ ! -d "$hatch/.git" ]; then
+  mkdir -p "$HOME/.tmux/plugins"
+  git clone --depth 1 https://github.com/craftzdog/tmux-claude-hatch.git "$hatch"
+fi
+
 echo
 echo "Done. Next:"
 echo "  1) brew bundle --file=$DOT/Brewfile"

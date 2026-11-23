@@ -11,7 +11,9 @@ brew "starship"                         # prompt
 brew "zoxide"                           # smarter cd
 brew "eza"                              # modern ls
 brew "bat"                              # cat with colors
-brew "fzf"                              # fuzzy finder
+brew "fzf"                              # fuzzy finder (tmux-claude-hatch picker)
+brew "jq"                               # parses Claude Code session files
+brew "tmux"                             # multiplexer; Claude Code hatch popups
 brew "ripgrep"                          # fast grep (used by nvim/telescope)
 brew "fd"                               # fast find
 brew "lazygit"                          # git TUI

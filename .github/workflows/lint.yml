@@ -40,6 +40,8 @@ jobs:
           test -L "$HOME/.config/fish/config.fish" || { echo "missing fish symlink"; exit 1; }
           test -L "$HOME/.claude/CLAUDE.md" || { echo "missing ~/.claude/CLAUDE.md symlink"; exit 1; }
           test -L "$HOME/.codex/AGENTS.md" || { echo "missing ~/.codex/AGENTS.md symlink"; exit 1; }
+          test -L "$HOME/.tmux.conf" || { echo "missing ~/.tmux.conf symlink"; exit 1; }
+          test -x "$HOME/.tmux/plugins/tmux-claude-hatch/claude_hatch.tmux" || { echo "missing tmux-claude-hatch"; exit 1; }
           diff "$(readlink -f "$HOME/.claude/CLAUDE.md")" "$(readlink -f "$HOME/.codex/AGENTS.md")" \
             || { echo "~/.claude/CLAUDE.md and ~/.codex/AGENTS.md point at different content"; exit 1; }
           echo "✓ install.sh reproduced the symlinks"

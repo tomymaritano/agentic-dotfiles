@@ -46,6 +46,7 @@ Ghostty (terminal)  →  fish (shell)  →  Neovim / LazyVim (editor)
 | Shell | [fish](https://fishshell.com) 4.x | interactive shell (default only in Ghostty; the system stays on zsh) |
 | Prompt | [starship](https://starship.rs) | prompt with git, AWS profile, kube context, language, duration; palette follows the active theme |
 | Editor | [Neovim](https://neovim.io) + [LazyVim](https://lazyvim.org) | LSP, completion, fuzzy find — a VSCode replacement |
+| Sessions | [tmux](https://github.com/tmux/tmux) + [tmux-claude-hatch](https://github.com/craftzdog/tmux-claude-hatch) | Claude Code in a popup per project directory |
 | `cd` | [zoxide](https://github.com/ajeetdsouza/zoxide) | jump to frequent dirs (`z <name>`) |
 | `ls` | [eza](https://eza.rocks) | listing with icons + git |
 | `cat` | [bat](https://github.com/sharkdp/bat) | syntax highlighting |
@@ -251,6 +252,26 @@ see [lazyvim.org/keymaps](https://www.lazyvim.org/keymaps) for the full list.
 | `tweet "idea"` | jot a tweet idea to `~/notes/tweets.md` |
 
 ## Per-tool notes
+
+### tmux (`tmux/tmux.conf`)
+
+Prefix is `Ctrl-b`. `install.sh` symlinks this file to `~/.tmux.conf` and clones [tmux-claude-hatch](https://github.com/craftzdog/tmux-claude-hatch) into `~/.tmux/plugins/tmux-claude-hatch`. The session follows the pane's directory, so open it from the project shell (a `:cd` inside Neovim does not count).
+
+| Key | Action |
+|-----|--------|
+| `Ctrl-b y` | Open or reattach Claude for this directory, in a popup |
+| `Ctrl-b d` | Close the popup. Claude keeps running |
+| `Ctrl-b u` | Picker of every running Claude (`enter` jumps, `ctrl-x` kills) |
+| `Ctrl-b r` | Reload `~/.tmux.conf` |
+
+To update the plugin later: `git -C ~/.tmux/plugins/tmux-claude-hatch pull`.
+
+The picker reads status on its own. The bell that highlights the window you launched from needs the companion Claude Code plugin (it does not edit `~/.claude/settings.json`):
+
+```text
+/plugin marketplace add craftzdog/tmux-claude-hatch
+/plugin install tmux-claude-hatch@tmux-claude-hatch
+```
 
 ### Ghostty (`ghostty/config`)
 - Font: `JetBrainsMono Nerd Font` (icons for LazyVim).
